@@ -10,17 +10,18 @@ pipeline {
 			    '''
 			}
 		}
-	}
-	stage('Build') {
-	    steps {
-	        sh '''
-	        . venv/bin/activate
-	        python -m py_compile sources/add2vals.py sources/calc.py
-	        ''' // Этот шаг `sh` (из раздела `steps`) запускает команду Python для компиляции вашего приложения и его библиотеки `calc` в файлы байт-кода (каждый с расширением `.pyc`), которые помещаются в рабочую директорию `sources` (внутри директории `/var/jenkins_home/workspace/simple-python-app` в контейнере Jenkins).
-	
-	        stash(name: 'compiled-results', includes: 'sources/*.py*') //Этот шаг `stash` (из раздела basic steps) сохраняет исходный код Python и скомпилированные файлы байт-кода (с расширением `.pyc`) из рабочей директории `sources` для использования на последующих этапах.
-	    }
+		stage('Build') {
+		    steps {
+		        sh '''
+		        . venv/bin/activate
+		        python -m py_compile sources/add2vals.py sources/calc.py
+		        ''' // Этот шаг `sh` (из раздела `steps`) запускает команду Python для компиляции вашего приложения и его библиотеки `calc` в файлы байт-кода (каждый с расширением `.pyc`), которые помещаются в рабочую директорию `sources` (внутри директории `/var/jenkins_home/workspace/simple-python-app` в контейнере Jenkins).
+		
+		        stash(name: 'compiled-results', includes: 'sources/*.py*') //Этот шаг `stash` (из раздела basic steps) сохраняет исходный код Python и скомпилированные файлы байт-кода (с расширением `.pyc`) из рабочей директории `sources` для использования на последующих этапах.
+		    }
+		}
 	}
 }
+
 
 
