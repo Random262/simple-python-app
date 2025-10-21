@@ -20,8 +20,22 @@ pipeline {
 		        stash(name: 'compiled-results', includes: 'sources/*.py*') //Этот шаг `stash` (из раздела basic steps) сохраняет исходный код Python и скомпилированные файлы байт-кода (с расширением `.pyc`) из рабочей директории `sources` для использования на последующих этапах.
 		    }
 		}
+		stage('Test') {
+		    steps {		
+		        sh '''
+		            . venv/bin/activate
+		            py.test --junit-xml test-reports/results.xml sources/test_calc.py
+		            ''' // Этот шаг `sh` (из раздела `steps`) выполняет команду `py.test` из `pytest` для файла `sources/test_calc.py`, которая запускает набор модульных тестов (определенных в `test_calc.py`) для функции `add2` библиотеки "calc" (используемой вашим простым Python-приложением `add2vals`). Опция `--junit-xml test-reports/results.xml` заставляет `py.test` генерировать отчет в формате JUnit XML, который сохраняется в `test-reports/results.xml` (внутри директории `/var/jenkins_home/workspace/simple-python-app` в Jenkins).		
+		    }
+		    post {
+		        always {
+		            junit 'test-reports/results.xml' // Этот шаг `junit` (предоставляемый плагином JUnit) архивирует отчет JUnit XML (сгенерированный командой `py.test` выше) и предоставляет результаты через интерфейс Jenkins. Условие `always` в разделе `post`, содержащее этот шаг `junit`, гарантирует, что шаг всегда выполняется по завершении этапа `Test`, независимо от результата этапа.
+		        }
+		    }
+		}
 	}
 }
+
 
 
 
