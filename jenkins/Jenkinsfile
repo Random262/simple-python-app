@@ -3,8 +3,13 @@ pipeline {
 	stages {
 		stage('Setup') {
 			steps {
-				echo 'Hello'
+			    sh '''
+			    python -m venv venv
+			    . venv/bin/activate 
+			    pip install -r requirements.txt
+			    '''
 			}
 		}
 	}
 }
+
